@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.owen.sleep_lab.RecordActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/heartRateDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="94dp"
+            android:layout_weight="1"
+            android:text="Heart Rate data display here"
+            android:textAlignment="center"
+            tools:layout_editor_absoluteX="158dp"
+            tools:layout_editor_absoluteY="15dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/startRecordBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Start Recording"
+                tools:layout_editor_absoluteX="6dp"
+                tools:layout_editor_absoluteY="3dp"/>
+
+            <Button
+                android:id="@+id/scanBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="scan for devises"
+                tools:layout_editor_absoluteX="231dp"
+                tools:layout_editor_absoluteY="3dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
