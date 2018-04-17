@@ -203,7 +203,7 @@ public class LoginActivity extends AppCompatActivity
                     if(task.isSuccessful())
                     {
                         finish();
-                        Toast.makeText(LoginActivity.this, "register  sussesful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "register sussesful", Toast.LENGTH_SHORT).show();
                         finish();
                         startActivity(new Intent(getApplicationContext(),ProfileActivity.class));
                     }

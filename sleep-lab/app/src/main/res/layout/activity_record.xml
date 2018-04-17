@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="94dp"
             android:layout_weight="1"
-            android:text="Heart Rate data display here"
+            android:text="@string/heartRate"
             android:textAlignment="center"
             tools:layout_editor_absoluteX="158dp"
             tools:layout_editor_absoluteY="15dp"/>
@@ -33,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Start Recording"
+                android:text="@string/startBtn"
                 tools:layout_editor_absoluteX="6dp"
                 tools:layout_editor_absoluteY="3dp"/>
 
@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="scan for devises"
+                android:text="scanBtn"
                 tools:layout_editor_absoluteX="231dp"
                 tools:layout_editor_absoluteY="3dp"/>
         </LinearLayout>

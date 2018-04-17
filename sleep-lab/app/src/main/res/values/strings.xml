@@ -14,4 +14,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="heartRate">Heartrate Date Displays Here</string>
+    <string name="startBtn">Start new recording</string>
+    <string name="scanBtn">Scan bluetooth device</string>
 </resources>
