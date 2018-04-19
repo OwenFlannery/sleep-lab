@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.UUID;
 /**
  * Created by owen on 19/04/2018.
  */
@@ -15,6 +16,7 @@ public class ConnectThread extends Thread
 	private BluetoothSocket mSocket;
 	private BluetoothDevice mDevice;
 	private String TAG ="ConnectThread";
+	private UUID MY_UUID = UUID.randomUUID();
 
 	public ConnectThread(BluetoothDevice device)
 	{
@@ -35,7 +37,7 @@ public class ConnectThread extends Thread
 
 	public void run()
 	{
-		mBluetoothAdapter.cancelDiscovery();
+		//mBluetoothAdapter.cancelDiscovery();
 		try
 		{
 			Log.d(TAG, "connectThread mSocket.connect called");
