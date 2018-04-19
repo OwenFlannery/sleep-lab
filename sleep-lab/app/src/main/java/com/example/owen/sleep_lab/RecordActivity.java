@@ -1,157 +1,207 @@
 package com.example.owen.sleep_lab;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothHealth;
+import android.bluetooth.BluetoothHealthAppConfiguration;
+import android.bluetooth.BluetoothHealthCallback;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import java.util.ArrayList;
+import android.widget.ToggleButton;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
 import java.util.UUID;
 
 public class RecordActivity extends AppCompatActivity
 {
-    //blurtooth
-    private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothGatt mGatt;
-    private Button startRecordingBtn, stopRecordingBtn;
-    int REQUEST_ENABLE_BT =1;
-    String deviceName,deviceMacAddress;
-    public BluetoothServerSocket mServerSocket;
-    public ArrayList deviceItemList;
-    private static final String TAG = RecordActivity.class.getSimpleName();
+	//bluetooth
+	private BluetoothAdapter mBluetoothAdapter;
+	private Button scanBtn, startRecordBtn, stopRecordBtn;
+	int REQUEST_ENABLE_BT = 1;
+	public BluetoothHealth mHeartRateMonitor;
+	public BluetoothDevice mdevice;
+	String deviceName, deviceMacAddress;
 
-    //UUIDs
-    private UUID HEART_RATE_SERVICE_UUID;
-    private UUID HEART_RATE_MEASUREMENT_CHAR_UUID;
-    private UUID HEART_RATE_CONTROL_POINT_CHAR_UUID;
+	private static final String TAG = RecordActivity.class.getSimpleName();
 
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        /*
-        HEART_RATE_SERVICE_UUID = ConvertFromInt(0x180D);
-        HEART_RATE_MEASUREMENT_CHAR_UUID = ConvertFromInt(0x2A37);
-        HEART_RATE_CONTROL_POINT_CHAR_UUID = ConvertFromInt(0x2A3);
-        */
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_record);
+		startRecordBtn = (Button) findViewById(R.id.startRecordBtn);
+		stopRecordBtn = (Button) findViewById(R.id.stopRecordBtn);
+		scanBtn = (Button) findViewById(R.id.scanBtn);
 
-        //tutorial way not using right now
-        final BluetoothManager mbluetoothManager= (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        //mBluetoothAdapter =mbluetoothManager.getAdapter();
+		stopRecordBtn.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_record);
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter);
-        startRecordingBtn =(Button)findViewById(R.id.statBtn);
-        //stopRecordingBtn =(Button)findViewById(R.id.stopBtn);
+			}
+		});
 
-        if (mBluetoothAdapter == null)
-        {
-            Log.d(TAG,"device not compatible with bluetooth");
-            Toast.makeText(this, "Bluetooth is not available on this device", Toast.LENGTH_SHORT).show();
-        }
+		startRecordBtn.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
 
-        if (!mBluetoothAdapter.isEnabled())
-        {
-            Intent enableBtIntent = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            IntentFilter enIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            registerReceiver(mReceiver,enIntent);
-        }
-        discoverable();
-        mBluetoothAdapter.cancelDiscovery();//use after discovery finished to reserve battery power
+			}
+		});
 
-        /*
-        final BluetoothAdapter.LeScanCallback scanCallback= new BluetoothAdapter.LeScanCallback()
-        {
-            @Override
-            public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes)
-            {
-                if(bluetoothDevice.getAddress()== HR_SENSOR_ADDRESS)
-                {
-                    myDevice = device;
-                }
-            }
-        };
+		scanBtn.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				mBluetoothAdapter.startDiscovery();
+				;
+			}
+		});
+		//broadcast receiver
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+		registerReceiver(mReceiver, filter);
 
-        BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-            @Override
-            public void onPhyUpdate(BluetoothGatt gatt, int txPhy, int rxPhy, int status) {
-                super.onPhyUpdate(gatt, txPhy, rxPhy, status);
-            }
-        };
-        gatt = myDevice.connectGatt(this,true,gattCallback);
-        */
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		if(mBluetoothAdapter == null)
+		{
+			Log.d(TAG, "device not compatible with bluetooth");
+			Toast.makeText(this, "Bluetooth is not available on this device", Toast.LENGTH_SHORT).show();
+		}
 
-    }
+		if(!mBluetoothAdapter.isEnabled())
+		{
+			Intent enableBtIntent = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+			IntentFilter enIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+			registerReceiver(mReceiver, enIntent);
+		}
 
-    public void discoverable()
-    {
-        Intent discoverableIntent =
-                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-        startActivity(discoverableIntent);
-    }
+		final BluetoothProfile.ServiceListener mProfileListener = new BluetoothProfile.ServiceListener()
+		{
+			@Override
+			public void onServiceConnected(int i, BluetoothProfile bluetoothProfile)
+			{
+				Log.d(TAG, "onServiceConnected");
+				if(i == BluetoothProfile.HEALTH)
+				{
+					mHeartRateMonitor = (BluetoothHealth) bluetoothProfile;
+				}
+			}
 
-    private BroadcastReceiver mReceiver= new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if(action.equals(mBluetoothAdapter.ACTION_STATE_CHANGED))
-            {
-                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, mBluetoothAdapter.ERROR);
-                switch(state)
-                {
-                    case BluetoothAdapter.STATE_OFF:
-                    Log.d(TAG,"state off");
-                        Toast.makeText(context, "bluetooth off", Toast.LENGTH_SHORT).show();
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        Log.d(TAG,"state ON");
-                        Toast.makeText(context, "bluetooth ON", Toast.LENGTH_SHORT).show();
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-                        Log.d(TAG,"state turning off");
-                        Toast.makeText(context, "bluetooth turning off", Toast.LENGTH_SHORT).show();
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        Log.d(TAG,"state turning on");
-                        Toast.makeText(context, "bluetooth turning on ", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-            if (BluetoothDevice.ACTION_FOUND.equals(action))
-            {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                deviceName = device.getName();
-                deviceMacAddress = device.getAddress(); // MAC address
-            }
-        }
-    };
+			@Override
+			public void onServiceDisconnected(int i)
+			{
+				Log.d(TAG, "onServiceDisconnected");
+				if(i == BluetoothProfile.HEALTH)
+				{
+					mHeartRateMonitor = null;
+				}
+			}
+		};
 
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        // Don't forget to unregister the ACTION_FOUND receiver.
-        unregisterReceiver(mReceiver);
-    }
-    /*
-    public UUID ConvertFromInt(int i)
-    {
-        final long MSB =0x0000000000001000L;
-        final long LSB = 0x800000805f9b34fbL;
-        long value = i & 0xFFFFFFFF;
-        return new UUID(MSB | (value << 32), LSB);
-    }
-    */
+		mBluetoothAdapter.getProfileProxy(this, mProfileListener, BluetoothProfile.HEALTH);
 
+		BluetoothHealthCallback healthCallback = new BluetoothHealthCallback()
+		{
+			@Override
+			public void onHealthAppConfigurationStatusChange(BluetoothHealthAppConfiguration config, int status)
+			{
+				super.onHealthAppConfigurationStatusChange(config, status);
+			}
+		};
+
+		//mBluetoothAdapter.startDiscovery();//make phone visible
+		//for pairing known devices
+		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+		if(pairedDevices.size() > 0)
+		{
+			for(BluetoothDevice device : pairedDevices)
+			{
+				deviceName = device.getName();
+				deviceMacAddress = device.getAddress();
+			}
+
+		}
+
+		Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+		discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+		startActivity(discoverableIntent);
+
+		//for discovering ne devices
+
+		//mBluetoothAdapter.cancelDiscovery();//stop searching for connections to save battery
+		//mBluetoothAdapter.closeProfileProxy(mHeartRateMonitor);
+
+	}//end of onCreate
+
+	public class ManageConnectThread extends Thread
+	{
+
+		public ManageConnectThread()
+		{
+		}
+
+		public void sendData(BluetoothSocket socket, int data) throws IOException
+		{
+			ByteArrayOutputStream output = new ByteArrayOutputStream(4);
+			output.write(data);
+			OutputStream outputStream = socket.getOutputStream();
+			outputStream.write(output.toByteArray());
+		}
+
+		public int receiveData(BluetoothSocket socket) throws IOException
+		{
+			byte[] buffer = new byte[4];
+			ByteArrayInputStream input = new ByteArrayInputStream(buffer);
+			InputStream inputStream = socket.getInputStream();
+			inputStream.read(buffer);
+			return input.read();
+		}
+	}
+
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			Toast.makeText(context, "mReceiver called", Toast.LENGTH_SHORT).show();
+			Toast.makeText(context, "your device is now discoverable", Toast.LENGTH_SHORT).show();
+
+			String action = intent.getAction();
+
+			if(BluetoothDevice.ACTION_FOUND.equals(action))
+			{
+				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				deviceName = device.getName();
+				deviceMacAddress = device.getAddress();
+			}
+		}
+	};
+
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		unregisterReceiver(mReceiver);
+	}
 }

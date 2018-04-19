@@ -10,17 +10,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="163dp">
 
         <TextView
             android:id="@+id/heartRateDisplay"
             android:layout_width="match_parent"
-            android:layout_height="94dp"
+            android:layout_height="298dp"
             android:layout_weight="1"
             android:text="@string/heartRate"
             android:textAlignment="center"
             tools:layout_editor_absoluteX="158dp"
-            tools:layout_editor_absoluteY="15dp"/>
+            tools:layout_editor_absoluteY="15dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,21 +32,26 @@
 
             <Button
                 android:id="@+id/startRecordBtn"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/startBtn"
-                tools:layout_editor_absoluteX="6dp"
-                tools:layout_editor_absoluteY="3dp"/>
+                android:text="Start Activity" />
+
+            <Button
+                android:id="@+id/stopRecordBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Stop Activity" />
 
             <Button
                 android:id="@+id/scanBtn"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="scanBtn"
+                android:text="scan for devices "
                 tools:layout_editor_absoluteX="231dp"
-                tools:layout_editor_absoluteY="3dp"/>
+                tools:layout_editor_absoluteY="3dp" />
         </LinearLayout>
 
     </LinearLayout>

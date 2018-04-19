@@ -2,26 +2,39 @@ package com.example.owen.sleep_lab;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 //import com.jjoe64.graphview.GraphView;
 
 public class StatsActivity extends AppCompatActivity
 {
+	private String TAG = "StatsActivity";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stats);
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		Scanner scanner;
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_stats);
 
-        //display list of values that represent files
+		try
+		{
+			scanner = new Scanner(new File("app\\sampledata\\11-04-2018.txt"));
+		}
+		catch(IOException e)
+		{
+			Log.d(TAG, "file not found ");
 
-       /* GraphView graphView = (GraphView)findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> setries =new LineGraphSeries<>(new DataPoint[]{
-           new DataPoint(0,1),
-           new DataPoint(1,5),
-           new DataPoint(2,3),
-           new DataPoint(2,5)
-        });
-        graphView.addSeries(series);*/
-    }
+		}
+		int[] tall = new int[100];
+		int i = 0;
+		while(scanner.hasNextInt())
+		{
+			tall[i++] = scanner.nextInt();
+		}
+
+	}
 }
