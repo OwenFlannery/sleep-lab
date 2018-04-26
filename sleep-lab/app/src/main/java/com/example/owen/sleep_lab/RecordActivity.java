@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
 
-public class RecordActivity extends AppCompatActivity
+public class RecordActivity extends AppCompatActivity implements View.OnClickListener
 {
 	//bluetooth
 	private BluetoothAdapter mBluetoothAdapter;
@@ -34,43 +34,21 @@ public class RecordActivity extends AppCompatActivity
 	public BluetoothDevice mdevice;
 	String deviceName, deviceMacAddress;
 
+
 	private static final String TAG = RecordActivity.class.getSimpleName();
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_record);
 		startRecordBtn = (Button) findViewById(R.id.startRecordBtn);
 		stopRecordBtn = (Button) findViewById(R.id.stopRecordBtn);
 		scanBtn = (Button) findViewById(R.id.scanBtn);
+		startRecordBtn.setOnClickListener(this);
+		stopRecordBtn.setOnClickListener(this);
+		scanBtn.setOnClickListener(this);
 
-		stopRecordBtn.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-
-			}
-		});
-
-		startRecordBtn.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-
-			}
-		});
-
-		scanBtn.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				mBluetoothAdapter.startDiscovery();
-				;
-			}
-		});
 		//broadcast receiver
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 		registerReceiver(mReceiver, filter);
@@ -90,86 +68,28 @@ public class RecordActivity extends AppCompatActivity
 			registerReceiver(mReceiver, enIntent);
 		}
 
-		final BluetoothProfile.ServiceListener mProfileListener = new BluetoothProfile.ServiceListener()
-		{
-			@Override
-			public void onServiceConnected(int i, BluetoothProfile bluetoothProfile)
-			{
-				Log.d(TAG, "onServiceConnected");
-				if(i == BluetoothProfile.HEALTH)
-				{
-					mHeartRateMonitor = (BluetoothHealth) bluetoothProfile;
-				}
-			}
-
-			@Override
-			public void onServiceDisconnected(int i)
-			{
-				Log.d(TAG, "onServiceDisconnected");
-				if(i == BluetoothProfile.HEALTH)
-				{
-					mHeartRateMonitor = null;
-				}
-			}
-		};
-
-		mBluetoothAdapter.getProfileProxy(this, mProfileListener, BluetoothProfile.HEALTH);
-
-		BluetoothHealthCallback healthCallback = new BluetoothHealthCallback()
-		{
-			@Override
-			public void onHealthAppConfigurationStatusChange(BluetoothHealthAppConfiguration config, int status)
-			{
-				super.onHealthAppConfigurationStatusChange(config, status);
-			}
-		};
-
-		//mBluetoothAdapter.startDiscovery();//make phone visible
-		//for pairing known devices
-		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-		if(pairedDevices.size() > 0)
-		{
-			for(BluetoothDevice device : pairedDevices)
-			{
-				deviceName = device.getName();
-				deviceMacAddress = device.getAddress();
-			}
-
-		}
-
-		Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-		discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-		startActivity(discoverableIntent);
-
-		//for discovering ne devices
-
-		//mBluetoothAdapter.cancelDiscovery();//stop searching for connections to save battery
-		//mBluetoothAdapter.closeProfileProxy(mHeartRateMonitor);
-
 	}//end of onCreate
 
-	public class ManageConnectThread extends Thread
+	@Override
+	public void onClick(View v)
 	{
-
-		public ManageConnectThread()
+		if (v == scanBtn)
 		{
+			startActivity(new Intent(this, DeviceScanActivity.class));
 		}
 
-		public void sendData(BluetoothSocket socket, int data) throws IOException
+		if(v== startRecordBtn)
 		{
-			ByteArrayOutputStream output = new ByteArrayOutputStream(4);
-			output.write(data);
-			OutputStream outputStream = socket.getOutputStream();
-			outputStream.write(output.toByteArray());
+
 		}
 
-		public int receiveData(BluetoothSocket socket) throws IOException
+		if(v==startRecordBtn)
 		{
-			byte[] buffer = new byte[4];
-			ByteArrayInputStream input = new ByteArrayInputStream(buffer);
-			InputStream inputStream = socket.getInputStream();
-			inputStream.read(buffer);
-			return input.read();
+
+		}
+		if(v==startRecordBtn)
+		{
+
 		}
 	}
 
@@ -186,15 +106,11 @@ public class RecordActivity extends AppCompatActivity
 			if(BluetoothDevice.ACTION_FOUND.equals(action))
 			{
 				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
 				deviceName = device.getName();
+				Toast.makeText(RecordActivity.this, "device found"+device.getName(), Toast.LENGTH_SHORT).show();
 				deviceMacAddress = device.getAddress();
 			}
 		}
 	};
-
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		unregisterReceiver(mReceiver);
-	}
 }

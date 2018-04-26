@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,20 +22,26 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.time.LocalDate;
+
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener
 {
+
     private static final int PICK_IMAGE_REQUEST = 234;
     private FirebaseAuth mAuth;
     private DatabaseReference database;
     private StorageReference storageReference;
     private TextView profileTextView;
+    String TAG;
     private EditText inputText;
-    private Button logoutBtn, sendToDb, chooseBtn, upLoadBtn, recordBtn, statBtn;
+    private Button logoutBtn, sendToDb, chooseBtn, upLoadBtn, recordBtn, statBtn, scanBtn;
     private Uri filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        TAG ="profile activity";
+        TAG ="profile activity";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         //************editText
@@ -54,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         recordBtn.setOnClickListener(this);
         statBtn = (Button) findViewById(R.id.statBtn);
         statBtn.setOnClickListener(this);
+
 
         //*************Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -93,6 +101,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
         if (view == recordBtn)
         {
+            Log.d(TAG,"move o record activity ");
             startActivity(new Intent(this, RecordActivity.class));
         }
         if (view == statBtn)
