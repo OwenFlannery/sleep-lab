@@ -67,7 +67,7 @@ public class DeviceScanActivity extends ListActivity
             Toast.makeText(this, "Location permissions already granted", Toast.LENGTH_SHORT).show();
         }
         super.onCreate(savedInstanceState);
-        //getActionBar().setTitle("title");
+      //  getActionBar().setTitle(R.string.title_devices);
         mHandler = new Handler();
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -89,6 +89,8 @@ public class DeviceScanActivity extends ListActivity
             finish();
             return;
         }
+
+
     }
 
     @Override
