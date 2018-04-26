@@ -6,15 +6,15 @@ package com.example.owen.sleep_lab;
 
 public class Save
 {
-    public String Message;
+	public String Message;
 
-    public Save()
-    {
+	public Save()
+	{
 
-    }
+	}
 
-    public Save(String message)
-    {
-        this.Message=message;
-    }
+	public Save(String message)
+	{
+		this.Message = message;
+	}
 }

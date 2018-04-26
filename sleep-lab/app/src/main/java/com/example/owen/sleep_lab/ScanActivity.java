@@ -70,12 +70,6 @@ public class ScanActivity extends Activity implements View.OnClickListener
 		}
 	};
 
-	// Handles various events fired by the Service.
-	// ACTION_GATT_CONNECTED: connected to a GATT server.
-	// ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
-	// ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
-	// ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-	//                        or notification operations.
 	private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -107,10 +101,6 @@ public class ScanActivity extends Activity implements View.OnClickListener
 		}
 	};
 
-	// If a given GATT characteristic is selected, check for supported features.  This sample
-	// demonstrates 'Read' and 'Notify' features.  See
-	// http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for the complete
-	// list of supported characteristic features.
 	private final ExpandableListView.OnChildClickListener servicesListClickListner = new ExpandableListView.OnChildClickListener()
 	{
 		@Override
@@ -122,8 +112,7 @@ public class ScanActivity extends Activity implements View.OnClickListener
 				final int charaProp = characteristic.getProperties();
 				if((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0)
 				{
-					// If there is an active notification on a characteristic, clear
-					// it first so it doesn't update the data field on the user interface.
+
 					if(mNotifyCharacteristic != null)
 					{
 						mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, false);
@@ -167,7 +156,6 @@ public class ScanActivity extends Activity implements View.OnClickListener
 		mConnectionState = (TextView) findViewById(R.id.connection_state);
 		mDataField = (TextView) findViewById(R.id.data_value);
 
-		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
 		bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 	}
@@ -216,22 +204,6 @@ public class ScanActivity extends Activity implements View.OnClickListener
 		return true;
 	}
 
-	/*@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-			case R.id.menu_connect:
-				mBluetoothLeService.connect(mDeviceAddress);
-				return true;
-			case R.id.menu_disconnect:
-				mBluetoothLeService.disconnect();
-				return true;
-			case android.R.id.home:
-				onBackPressed();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}*/
-
 	@Override
 	public void onClick(View v)
 	{
@@ -239,7 +211,7 @@ public class ScanActivity extends Activity implements View.OnClickListener
 		{
 			try
 			{
-				Toast.makeText(this, "connected"+mDeviceAddress, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "connected" + mDeviceAddress, Toast.LENGTH_SHORT).show();
 				mBluetoothLeService.connect(mDeviceAddress);
 			}
 			catch(Exception e)
@@ -283,9 +255,6 @@ public class ScanActivity extends Activity implements View.OnClickListener
 		}
 	}
 
-	// Demonstrates how to iterate through the supported GATT Services/Characteristics.
-	// In this sample, we populate the data structure that is bound to the ExpandableListView
-	// on the UI.
 	private void displayGattServices(List<BluetoothGattService> gattServices)
 	{
 		if(gattServices == null)

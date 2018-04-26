@@ -3,10 +3,6 @@ package com.example.owen.sleep_lab;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothHealth;
-import android.bluetooth.BluetoothHealthAppConfiguration;
-import android.bluetooth.BluetoothHealthCallback;
-import android.bluetooth.BluetoothProfile;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Set;
 
 public class RecordActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -76,20 +66,6 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
 		if (v == scanBtn)
 		{
 			startActivity(new Intent(this, DeviceScanActivity.class));
-		}
-
-		if(v== startRecordBtn)
-		{
-
-		}
-
-		if(v==startRecordBtn)
-		{
-
-		}
-		if(v==startRecordBtn)
-		{
-
 		}
 	}
 

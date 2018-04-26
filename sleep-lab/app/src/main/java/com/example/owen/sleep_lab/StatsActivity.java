@@ -4,20 +4,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
-//import com.jjoe64.graphview.GraphView;
+import java.util.function.DoublePredicate;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.*;
 
 public class StatsActivity extends AppCompatActivity
 {
@@ -25,11 +31,15 @@ public class StatsActivity extends AppCompatActivity
 	GraphView graph1, graph2, graph3;
 	TextView textView;
 	int x, y, i;
+	private String[] path;
+	private String[] fileName;
+	private File[] listFile;
+	ArrayList<graph> uploadData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		Scanner scanner=new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stats);
 		graph1 = (GraphView) findViewById(R.id.graph1);
@@ -37,49 +47,85 @@ public class StatsActivity extends AppCompatActivity
 
 		LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
 
+		//path ="C:\\Users\\owen\\Desktop\\sleep-lab-master\\sleep-lab\\app\\src\\main\\sampledata\\";
+		//readExcel(path);
+	}
 
-String text="";
+	private void readExcel(String filepath)
+	{
+		File inputFile = new File(filepath);
+
 		try
 		{
-			InputStream in = getAssets().open("app\\sampledata\\11-04-2018.txt");
-			int size= in.available();
-			byte[] buffer = new byte[size];
-			in.read(buffer);
-			in.close();
-			text = new String(buffer);
+			InputStream input = new FileInputStream(inputFile);
+			XSSFWorkbook workBook = new XSSFWorkbook(input);
+			XSSFSheet sheet = workBook.getSheetAt(0);
+			int rows = sheet.getPhysicalNumberOfRows();
+			FormulaEvaluator formulaEvaluator = workBook.getCreationHelper().createFormulaEvaluator();
+			StringBuilder sb = new StringBuilder();
 
-			textView.setText(text);
+			for(int i = 0; i < rows; i++)
+			{
+				Row row = sheet.getRow(i);
+				int cellCount = row.getPhysicalNumberOfCells();
 
+				int j = 25;
+				String value = getCellAssString(row, j, formulaEvaluator);
+				sb.append(value + ", ");
 
+			}
 
-			//scanner = new Scanner(new File("app\\sampledata\\11-04-2018.txt"));
+		}
+		catch(FileNotFoundException e)
+		{
+			Log.d(TAG, "File not Found");
 		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
 		}
+	}
 
-		/*int[] fileOne = new int[20000];
-
-		int j = 0;
-		for(i=0; i < 200||j<2; i++)
+	private String getCellAssString(Row row, int j, FormulaEvaluator formulaEvaluator)
+	{
+		String value = " ";
+		try
 		{
-				fileOne[i+1] = scanner.nextInt();
+			Cell cell = row.getCell(j);
+			CellValue cellValue = formulaEvaluator.evaluate(cell);
+			double numericValue = cellValue.getNumberValue();
 
-			Toast.makeText(this, "value"+fileOne[i], Toast.LENGTH_SHORT).show();
-			x = i;
-			y = fileOne[i];
-			series.appendData(new DataPoint(x, y), true, 200);
+			value = " " + numericValue;
+		}
+		catch(NullPointerException e)
+		{
+			e.printStackTrace();
 
-			if(scanner.hasNextInt())
+		}
+		return value;
+	}
+
+	private void parseStringBuilder(StringBuilder sb)
+	{
+
+		String[] rows = sb.toString().split(":");
+
+		for(int d = 0; d < rows.length; d++)
+		{
+			String[] columns = rows[d].split(",");
+
+			try
 			{
-				j = 0;
+				double x = Double.parseDouble(columns[0]);
+				double y = Double.parseDouble(columns[1]);
+
+				uploadData.add(new graph(x, y));
 			}
-			else
+			catch(NumberFormatException e)
 			{
-				j = 5;
+				e.printStackTrace();
 			}
 		}
-		graph1.addSeries(series);
-	*/}
+
+	}
 }
