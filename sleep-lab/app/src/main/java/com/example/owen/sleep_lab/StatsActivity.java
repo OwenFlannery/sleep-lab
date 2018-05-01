@@ -1,29 +1,31 @@
 package com.example.owen.sleep_lab;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.TextView;
+		import android.support.v7.app.AppCompatActivity;
+		import android.os.Bundle;
+		import android.util.Log;
+		import android.widget.TextView;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+		import com.jjoe64.graphview.GraphView;
+		import com.jjoe64.graphview.series.DataPoint;
+		import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
-import java.util.function.DoublePredicate;
+		import java.io.File;
+		import java.io.FileInputStream;
+		import java.io.FileNotFoundException;
+		import java.io.IOException;
+		import java.io.InputStream;
+		import java.util.ArrayList;
+		import java.util.Date;
+		import java.util.Scanner;
+		import java.util.function.DoublePredicate;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.*;
+		/* jar file needs to be imported for accessing values from excell files http://www.java2s.com/Code/Jar/p/Downloadpoi39jar.htm
+		import org.apache.poi.ss.usermodel.Cell;
+		import org.apache.poi.ss.usermodel.CellValue;
+		import org.apache.poi.ss.usermodel.FormulaEvaluator;
+		import org.apache.poi.ss.usermodel.Row;
+		import org.apache.poi.xssf.usermodel.*;
+		*//////////////////////
 
 public class StatsActivity extends AppCompatActivity
 {
@@ -51,7 +53,7 @@ public class StatsActivity extends AppCompatActivity
 		//readExcel(path);
 	}
 
-	private void readExcel(String filepath)
+	/*private void readExcel(String filepath)
 	{
 		File inputFile = new File(filepath);
 
@@ -103,7 +105,7 @@ public class StatsActivity extends AppCompatActivity
 
 		}
 		return value;
-	}
+	}*/
 
 	private void parseStringBuilder(StringBuilder sb)
 	{

@@ -10,7 +10,6 @@ public class Save
 
 	public Save()
 	{
-
 	}
 
 	public Save(String message)
